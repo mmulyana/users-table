@@ -1,5 +1,11 @@
 import React, { useState } from 'react'
-import { useTable, useGlobalFilter, useAsyncDebounce, useFilters } from 'react-table'
+import {
+  useTable,
+  useGlobalFilter,
+  useAsyncDebounce,
+  useFilters,
+  useSortBy,
+} from 'react-table'
 
 function GlobalFilter({
   preGlobalFilteredRows,
@@ -76,6 +82,7 @@ export default function Table({ columns, data }) {
     },
     useFilters,
     useGlobalFilter,
+    useSortBy
   )
 
   return (
@@ -100,7 +107,13 @@ export default function Table({ columns, data }) {
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  {column.render('Header')}
+                  {/* Add a sort direction indicator */}
+                  <span>
+                    {column.isSorted ? (column.isSortedDesc ? ' ▼' : ' ▲') : ''}
+                  </span>
+                </th>
               ))}
             </tr>
           ))}
@@ -118,7 +131,6 @@ export default function Table({ columns, data }) {
           })}
         </tbody>
       </table>
-      
     </>
   )
 }
