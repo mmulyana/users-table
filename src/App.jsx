@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import Table, { SelectColumnFilter } from './Table'
+import Table, { AvatarCell, SelectColumnFilter, StatusPill } from './Table'
 
 const getData = () => {
   const data = [
@@ -64,23 +64,18 @@ const getData = () => {
       age: 21,
     },
   ]
-  //  concatenate the initial array three times for more data
+  //  concatenate the initial array four times for more data
   return [...data, ...data, ...data, ...data]
 }
 
 function App() {
   const columns = useMemo(
     () => [
-      { Header: 'Name', accessor: 'name' },
+      { Header: 'Name', accessor: 'name', Cell: AvatarCell, imgAccessor: 'imgUrl', emailAccessor: 'email',},
       { Header: 'Title', accessor: 'title' },
-      { Header: 'Status', accessor: 'status' },
+      { Header: 'Status', accessor: 'status', Cell: StatusPill },
       { Header: 'Age', accessor: 'age' },
-      {
-        Header: 'Role',
-        accessor: 'role',
-        Filter: SelectColumnFilter,
-        filter: 'inclides',
-      },
+      { Header: 'Role', accessor: 'role', Filter: SelectColumnFilter, filter: 'inclides', },
     ],
     []
   )
@@ -89,8 +84,13 @@ function App() {
 
   return (
     <>
-      <h1>Users Table</h1>
-      <Table columns={columns} data={data} />
+      <div className='min-h-screen bg-gray-100 text-gray-900'>
+        <main className='max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-4'>
+          <div className='mt-4'>
+            <Table columns={columns} data={data} />
+          </div>
+        </main>
+      </div>
     </>
   )
 }
