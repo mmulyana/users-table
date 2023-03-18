@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useTable, useGlobalFilter, useAsyncDebounce } from 'react-table'
+import { useTable, useGlobalFilter, useAsyncDebounce, useFilters } from 'react-table'
 
 function GlobalFilter({
   preGlobalFilteredRows,
@@ -27,6 +27,38 @@ function GlobalFilter({
   )
 }
 
+export function SelectColumnFilter({
+  column: { filterValue, setFilter, preFilteredRows, id },
+}) {
+  // Calculate the options for filtering
+  const options = React.useMemo(() => {
+    const options = new Set()
+    preFilteredRows.forEach((row) => {
+      options.add(row.values[id])
+    })
+    return [...options.values()]
+  }, [id, preFilteredRows])
+
+  // Render a multi-select box
+  return (
+    <select
+      name={id}
+      id={id}
+      value={filterValue}
+      onChange={(e) => {
+        setFilter(e.target.value || undefined)
+      }}
+    >
+      <option value=''>All</option>
+      {options.map((option, i) => (
+        <option key={i} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
+  )
+}
+
 export default function Table({ columns, data }) {
   const {
     getTableProps,
@@ -42,7 +74,8 @@ export default function Table({ columns, data }) {
       columns,
       data,
     },
-    useGlobalFilter
+    useFilters,
+    useGlobalFilter,
   )
 
   return (
@@ -52,6 +85,16 @@ export default function Table({ columns, data }) {
         globalFilter={state.globalFilter}
         setGlobalFilter={setGlobalFilter}
       />
+      {headerGroups.map((headerGroup) =>
+        headerGroup.headers.map((column) =>
+          column.Filter ? (
+            <div key={column.id}>
+              <label for={column.id}>{column.render('Header')}: </label>
+              {column.render('Filter')}
+            </div>
+          ) : null
+        )
+      )}
       <table {...getTableProps()} border='1'>
         <thead>
           {headerGroups.map((headerGroup) => (
@@ -75,6 +118,7 @@ export default function Table({ columns, data }) {
           })}
         </tbody>
       </table>
+      
     </>
   )
 }

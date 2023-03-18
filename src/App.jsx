@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import Table from './Table'
+import Table, {SelectColumnFilter} from './Table'
 
 const getData = () => [
   {
@@ -69,7 +69,7 @@ function App() {
       { Header: 'Name', accessor: 'name',},
       { Header: 'Title', accessor: 'title',},
       { Header: 'Status', accessor: 'status',},
-      { Header: 'Role', accessor: 'role',},
+      { Header: 'Role', accessor: 'role', Filter: SelectColumnFilter, filter: 'inclides'},
     ],[])
   
   const data = useMemo(() => getData(), [])
